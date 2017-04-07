@@ -33,12 +33,20 @@ module powerbi.extensibility.visual {
             console.log('Visual constructor', options);
             this.target = options.element;
             this.updateCount = 0;
+
+            jQuery(this.target).ready(()=>{
+                console.log("Dokument ready")
+            });
         }
 
         public update(options: VisualUpdateOptions) {
             console.log('Visual update', options);
             
             console.log(jQuery().jquery)
+
+            
+
+
 
             this.target.innerHTML = `<p>Update count: <em>${(this.updateCount++)}</em></p>`;
 
