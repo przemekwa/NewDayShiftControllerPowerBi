@@ -29,12 +29,10 @@
 
 module powerbi.extensibility.visual {
      
-     export interface DataRows {
-    Year: string;
-    Day: string;
-    Month: string;
-
-
+     export interface DataRow {
+    Date: Date,
+    TaskId: string,
+    Name: string
 }
 
     export class Visual implements IVisual {
@@ -52,33 +50,45 @@ module powerbi.extensibility.visual {
         }
 
         public update(options: VisualUpdateOptions) {
-            console.log('Visual update', options);
-            
-            let allDate:Array<DataRows> = [];
+            let allData:Array<DataRow> = [];
             
             options.dataViews[0].table.rows.forEach(element => {
-                
-                let  obj:DataRows = { Day: element[3].toString(), Year: element[0].toString(), Month: element[2].toString() };
-
-                allDate.push(obj);
-
-
-                // console.log(obj);
-               
+                let date = new Date(element[3].toString() + "-" + element[2].toString()  + "-" +  element[0].toString());
+                let  obj:DataRow = { Date: date, TaskId:element[5].toString(), Name:element[4].toString() };
+                allData.push(obj);
             });
 
-              console.log(allDate.filter((element)=>element.Day == "21").length)
+              switch (allData.filter(this.CheckS11).length)
+              {
+                  case 0:
+                    this.target.innerHTML += "<div class='taskBlock few'>S11</div>"
+                  case 1:
+                    this.target.innerHTML += "<div class='taskBlock good'>S11</div>"
+                  default:
+                    this.target.innerHTML += "<div class='taskBlock lot'>S11</div>"
+              }
+
             
-            
+            //   console.log(allDate.filter((element)=>element.Day == "21").length)
             console.log(jQuery().jquery)
 
 
-
-
-
-
-            this.target.innerHTML = ""
             console.log(jQuery(this.target).html())
+        }
+
+
+        private CheckS11(row:DataRow): boolean
+        {
+            if (row.TaskId === "S11") {
+
+                var day = row.Date.getDay();
+
+                if(day > 0 && day <5)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
