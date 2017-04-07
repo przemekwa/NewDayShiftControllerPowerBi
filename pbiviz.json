@@ -1,0 +1,25 @@
+{
+  "visual": {
+    "name": "newDayShiftController",
+    "displayName": "NewDayShiftController",
+    "guid": "newDayShiftControllerE0CD1AA54BB949769C7F477B015202B5",
+    "visualClassName": "Visual",
+    "version": "1.0.0",
+    "description": "",
+    "supportUrl": "",
+    "gitHubUrl": ""
+  },
+  "apiVersion": "1.6.0",
+  "author": {
+    "name": "",
+    "email": ""
+  },
+  "assets": {
+    "icon": "assets/icon.png"
+  },
+  "externalJS": [],
+  "style": "style/visual.less",
+  "capabilities": "capabilities.json",
+  "dependencies": "dependencies.json",
+  "stringResources": []
+}
