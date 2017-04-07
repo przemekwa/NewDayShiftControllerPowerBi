@@ -18,7 +18,8 @@
     "icon": "assets/icon.png"
   },
   "externalJS": [
-    "node_modules/jquery/dist/jquery.min.js"
+    "node_modules/jquery/dist/jquery.js"
+    
   ],
   "style": "style/visual.less",
   "capabilities": "capabilities.json",

@@ -1,5 +1,8 @@
 {
   "globalDependencies": {
     "jquery": "registry:dt/jquery#1.10.0+20170310222111"
+  },
+  "dependencies": {
+    "fullcalendar": "registry:dt/fullcalendar#2.7.0+20170223151516"
   }
 }
