@@ -58,7 +58,7 @@ module powerbi.extensibility.visual {
                 allData.push(obj);
             });
 
-              switch (allData.filter(this.CheckS11).length)
+              switch (allData.filter( element => this.CheckS11(element,1,5)).length)
               {
                   case 0:
                     this.target.innerHTML += "<div class='taskBlock few'>S11</div>"
@@ -77,13 +77,13 @@ module powerbi.extensibility.visual {
         }
 
 
-        private CheckS11(row:DataRow): boolean
+        private CheckS11(row:DataRow, dayFrom:number, dayTo:number): boolean
         {
             if (row.TaskId === "S11") {
 
                 var day = row.Date.getDay();
 
-                if(day > 0 && day <5)
+                if(day => dayFrom && day <= dayTo)
                 {
                     return true;
                 }
