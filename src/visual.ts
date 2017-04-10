@@ -72,16 +72,16 @@ module powerbi.extensibility.visual {
             for (var propertyName in groupByDate) {
                 var date = new Date(propertyName);
                 htmlOutput += "<tr><td>" + this.getFormattedDate(date) + "</td>"
-                htmlOutput += this.getTdTag(this.CheckTask1Shft(date, groupByDate[propertyName] as Array<DataRow>, "S11"));
-                htmlOutput += this.getTdTag(this.CheckTask1Shft(date, groupByDate[propertyName] as Array<DataRow>, "S12"));
-                htmlOutput += this.getTdTag(this.CheckTask1NShft(date, groupByDate[propertyName] as Array<DataRow>, "S14"));
-                htmlOutput += this.getTdTag(this.CheckTask1NShft(date, groupByDate[propertyName] as Array<DataRow>, "S16"));
-                htmlOutput += this.getTdTag(this.CheckTask1NShft(date, groupByDate[propertyName] as Array<DataRow>, "S15"));
-                htmlOutput += this.getTdTag(this.CheckTask1Shft(date, groupByDate[propertyName] as Array<DataRow>, "S21"));
-                htmlOutput += this.getTdTag(this.CheckTask1Shft(date, groupByDate[propertyName] as Array<DataRow>, "S22"));
-                htmlOutput += this.getTdTag(this.CheckTask1NShft(date, groupByDate[propertyName] as Array<DataRow>, "S23"));
-                htmlOutput += this.getTdTag(this.CheckTaskWeekendShft(date, groupByDate[propertyName] as Array<DataRow>, "S01"));
-                htmlOutput += this.getTdTag(this.CheckTaskWeekendShft(date, groupByDate[propertyName] as Array<DataRow>, "S02"));
+                htmlOutput += this.getTdTag(this.checkExaclyOneShft(date, groupByDate[propertyName] as Array<DataRow>, "S11"));
+                htmlOutput += this.getTdTag(this.checkExaclyOneShft(date, groupByDate[propertyName] as Array<DataRow>, "S12"));
+                htmlOutput += this.getTdTag(this.checkAtLeastOneShft(date, groupByDate[propertyName] as Array<DataRow>, "S14"));
+                htmlOutput += this.getTdTag(this.checkAtLeastOneShft(date, groupByDate[propertyName] as Array<DataRow>, "S16"));
+                htmlOutput += this.getTdTag(this.checkAtLeastOneShft(date, groupByDate[propertyName] as Array<DataRow>, "S15"));
+                htmlOutput += this.getTdTag(this.checkExaclyOneShft(date, groupByDate[propertyName] as Array<DataRow>, "S21"));
+                htmlOutput += this.getTdTag(this.checkExaclyOneShft(date, groupByDate[propertyName] as Array<DataRow>, "S22"));
+                htmlOutput += this.getTdTag(this.checkAtLeastOneShft(date, groupByDate[propertyName] as Array<DataRow>, "S23"));
+                htmlOutput += this.getTdTag(this.checkkWeekendShft(date, groupByDate[propertyName] as Array<DataRow>, "S01"));
+                htmlOutput += this.getTdTag(this.checkkWeekendShft(date, groupByDate[propertyName] as Array<DataRow>, "S02"));
             }
             htmlOutput += `</tbody></table></div></div></div></div>`
 
@@ -109,7 +109,7 @@ module powerbi.extensibility.visual {
             }
         }
 
-        private CheckTask1Shft(date: Date, rows: Array<DataRow>, task: string): ShiftResult {
+        private checkExaclyOneShft(date: Date, rows: Array<DataRow>, task: string): ShiftResult {
 
             if (date.getDay() == 6 || date.getDay() == 0) {
                 return ShiftResult.NONE
@@ -125,7 +125,7 @@ module powerbi.extensibility.visual {
             }
         }
 
-        private CheckTaskWeekendShft(date: Date, rows: Array<DataRow>, task: string): ShiftResult {
+        private checkkWeekendShft(date: Date, rows: Array<DataRow>, task: string): ShiftResult {
 
             if (date.getDay() > 0 && date.getDay() < 6) {
                 return ShiftResult.NONE
@@ -141,7 +141,7 @@ module powerbi.extensibility.visual {
             }
         }
 
-        private CheckTask1NShft(date: Date, rows: Array<DataRow>, task: string): ShiftResult {
+        private checkAtLeastOneShft(date: Date, rows: Array<DataRow>, task: string): ShiftResult {
 
             if (date.getDay() == 6 || date.getDay() == 0) {
                 return ShiftResult.NONE
