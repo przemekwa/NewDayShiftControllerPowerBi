@@ -32,11 +32,21 @@
 
 
 module powerbi.extensibility.visual {
+
     export interface DataRow {
         Date: Date,
         TaskId: string,
         Name: string
     }
+
+    enum ShiftResult {
+        GOOD,
+        UP,
+        DOWN,
+        NONE
+    }
+
+
     export class Visual implements IVisual {
         private target: HTMLElement;
         private updateCount: number;
@@ -88,11 +98,13 @@ module powerbi.extensibility.visual {
         <th>S21</th>
         <th>S22</th>
         <th>S23</th>
+        <th>S01</th>
+        <th>S02</th>
       </tr>
     </thead>
     <tbody>`
 
-    console.log(groupByDate);
+            console.log(groupByDate);
 
             for (var propertyName in groupByDate) {
 
@@ -101,20 +113,17 @@ module powerbi.extensibility.visual {
                 htmlOutput += "<tr><td>" + this.getFormattedDate(date) + "</td>"
 
 
+                htmlOutput += this.getTdTag(this.CheckTask1Shft(date, groupByDate[propertyName] as Array<DataRow>, "S11"));
 
-
-
-                htmlOutput += this.getTdTag(this.CheckTask1Shft(groupByDate[propertyName] as Array<DataRow>, "S11", 1,5));
-
-                htmlOutput +=  this.getTdTag(this.CheckTask1Shft(groupByDate[propertyName] as Array<DataRow>, "S12", 1,5));
-                htmlOutput += `<td><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>`
-                htmlOutput += `<td><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>`
-                htmlOutput += `<td><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>`
-                htmlOutput += this.getTdTag(this.CheckTask1Shft(groupByDate[propertyName] as Array<DataRow>, "S21", 1,5));
-                htmlOutput += this.getTdTag(this.CheckTask1Shft(groupByDate[propertyName] as Array<DataRow>, "S22", 1,5));
-                htmlOutput += `<td><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td></tr>`
-
-
+                htmlOutput += this.getTdTag(this.CheckTask1Shft(date, groupByDate[propertyName] as Array<DataRow>, "S12"));
+                htmlOutput += this.getTdTag(this.CheckTask1NShft(date, groupByDate[propertyName] as Array<DataRow>, "S14"));
+                htmlOutput +=  this.getTdTag(this.CheckTask1NShft(date, groupByDate[propertyName] as Array<DataRow>, "S16"));
+                htmlOutput +=  this.getTdTag(this.CheckTask1NShft(date, groupByDate[propertyName] as Array<DataRow>, "S15"));
+                htmlOutput += this.getTdTag(this.CheckTask1Shft(date, groupByDate[propertyName] as Array<DataRow>, "S21"));
+                htmlOutput += this.getTdTag(this.CheckTask1Shft(date, groupByDate[propertyName] as Array<DataRow>, "S22"));
+                htmlOutput +=  this.getTdTag(this.CheckTask1NShft(date, groupByDate[propertyName] as Array<DataRow>, "S23"));
+                htmlOutput +=  this.getTdTag(this.CheckTaskWeekendShft(date, groupByDate[propertyName] as Array<DataRow>, "S01"));
+                htmlOutput +=  this.getTdTag(this.CheckTaskWeekendShft(date, groupByDate[propertyName] as Array<DataRow>, "S02"));
 
 
 
@@ -161,35 +170,66 @@ module powerbi.extensibility.visual {
         }
 
 
-        private getTdTag(result: boolean): string {
+        private getTdTag(result: ShiftResult): string {
 
             switch (result) {
-                case true:
-                    return '<td><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>'
-                case false:
-                    return '<td><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></td>'
+                case ShiftResult.GOOD:
+                    return '<td><span data-toggle="tooltip" title="Hooray!" class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>'
+                case ShiftResult.DOWN:
+                    return '<td><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></td>'
+                case ShiftResult.UP:
+                    return '<td><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></td>'
+                case ShiftResult.NONE:
+                    return '<td><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></td>'
             }
 
         }
 
-        private CheckTask1Shft(rows: Array<DataRow>, task:string, dayFrom:number, dayTo:number): boolean {
+        private CheckTask1Shft(date: Date, rows: Array<DataRow>, task: string): ShiftResult {
 
-            return rows.filter(e => {
+            if (date.getDay() == 6 || date.getDay() == 0) {
+                return ShiftResult.NONE
+            }   
 
-                if (e.Name === task) {
-
-                    var day = e.Date.getDay();
-
-                    if (day => dayFrom && day <= dayTo) {
-                        return true;
-                    }
-                }
-                return false;
-
-            }).length === 1;
+            switch (rows.filter(e => e.Name == task).length) {
+                case 1:
+                    return ShiftResult.GOOD
+                case 0:
+                    return ShiftResult.UP
+                default:
+                    return ShiftResult.DOWN
+            }
         }
 
-        
+           private CheckTaskWeekendShft(date: Date, rows: Array<DataRow>, task: string): ShiftResult {
+
+            if (date.getDay() > 0 && date.getDay() < 6) {
+                return ShiftResult.NONE
+            }   
+
+            switch (rows.filter(e => e.Name == task).length) {
+                case 1:
+                    return ShiftResult.GOOD
+                case 0:
+                    return ShiftResult.UP
+                default:
+                    return ShiftResult.DOWN
+            }
+        }
+
+          private CheckTask1NShft(date: Date, rows: Array<DataRow>, task: string): ShiftResult {
+
+            if (date.getDay() == 6 || date.getDay() == 0) {
+                return ShiftResult.NONE
+            }   
+
+            switch (rows.filter(e => e.Name == task).length) {
+                case 0:
+                    return ShiftResult.UP
+                default:
+                    return ShiftResult.GOOD
+            }
+        }
 
         private getFormattedDate(date) {
             var year = date.getFullYear();
