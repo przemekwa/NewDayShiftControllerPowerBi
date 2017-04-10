@@ -19,7 +19,9 @@
   },
   "externalJS": [
     "node_modules/jquery/dist/jquery.js",
-    "node_modules/linq/linq.js"
+    "node_modules/linq/linq.js",
+    "node_modules/bootstrap/dist/js/bootstrap.js"
+
   ],
   "style": "style/visual.less",
   "capabilities": "capabilities.json",

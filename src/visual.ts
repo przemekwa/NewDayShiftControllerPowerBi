@@ -68,41 +68,81 @@ module powerbi.extensibility.visual {
 
             console.log("Działa2?")
 
-            var d = allData.filter(element => this.CheckS11(element, 1, 5)).length;
 
             let groupByDate = this.GroupBy(allData, "Date") as Array<any>;
+
+            let htmlOutput = `<div class="container">
+  <div class="panel-group">
+    <div class="panel panel-default">
+      <div class="panel-heading">Zmiany</div>
+      <div class="panel-body">
+       <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Data</th>
+        <th>S11</th>
+        <th>S12</th>
+        <th>S14</th>
+        <th>S16</th>
+        <th>S15</th>
+        <th>S21</th>
+        <th>S22</th>
+        <th>S23</th>
+      </tr>
+    </thead>
+    <tbody>`
+
+    console.log(groupByDate);
 
             for (var propertyName in groupByDate) {
 
                 var date = new Date(propertyName);
 
-                var value = groupByDate[propertyName] as Array<DataRow>;
-
-                console.log(value.length);
+                htmlOutput += "<tr><td>" + this.getFormattedDate(date) + "</td>"
 
 
-                console.log(this.getFormattedDate(date));
+
+
+
+                htmlOutput += this.getTdTag(this.CheckTask1Shft(groupByDate[propertyName] as Array<DataRow>, "S11", 1,5));
+
+                htmlOutput +=  this.getTdTag(this.CheckTask1Shft(groupByDate[propertyName] as Array<DataRow>, "S12", 1,5));
+                htmlOutput += `<td><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>`
+                htmlOutput += `<td><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>`
+                htmlOutput += `<td><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>`
+                htmlOutput += this.getTdTag(this.CheckTask1Shft(groupByDate[propertyName] as Array<DataRow>, "S21", 1,5));
+                htmlOutput += this.getTdTag(this.CheckTask1Shft(groupByDate[propertyName] as Array<DataRow>, "S22", 1,5));
+                htmlOutput += `<td><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td></tr>`
+
+
+
+
+
+
+
+
             }
 
 
+            htmlOutput += `
+     
+  
+     
+    </tbody>
+  </table>
+      </div>
+    </div>
+   
+  </div>
+</div>`
+
+            this.target.innerHTML = htmlOutput;
 
 
 
 
 
 
-
-
-            switch (d) {
-                case 0:
-                    this.target.innerHTML += "<div class='taskBlock few'>S11 </div>"
-                    break;
-                case 1:
-                    this.target.innerHTML += "<div class='taskBlock good'>S11</div>"
-                    break;
-                default:
-                    this.target.innerHTML += "<div class='taskBlock lot'>S11</div>"
-            }
 
 
             //   console.log(allDate.filter((element)=>element.Day == "21").length)
@@ -120,17 +160,36 @@ module powerbi.extensibility.visual {
             }, {});
         }
 
-        private CheckS11(row: DataRow, dayFrom: number, dayTo: number): boolean {
-            if (row.TaskId === "S11") {
 
-                var day = row.Date.getDay();
+        private getTdTag(result: boolean): string {
 
-                if (day => dayFrom && day <= dayTo) {
-                    return true;
-                }
+            switch (result) {
+                case true:
+                    return '<td><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>'
+                case false:
+                    return '<td><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></td>'
             }
-            return false;
+
         }
+
+        private CheckTask1Shft(rows: Array<DataRow>, task:string, dayFrom:number, dayTo:number): boolean {
+
+            return rows.filter(e => {
+
+                if (e.Name === task) {
+
+                    var day = e.Date.getDay();
+
+                    if (day => dayFrom && day <= dayTo) {
+                        return true;
+                    }
+                }
+                return false;
+
+            }).length === 1;
+        }
+
+        
 
         private getFormattedDate(date) {
             var year = date.getFullYear();
