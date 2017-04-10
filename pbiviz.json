@@ -18,8 +18,8 @@
     "icon": "assets/icon.png"
   },
   "externalJS": [
-    "node_modules/jquery/dist/jquery.js"
-    
+    "node_modules/jquery/dist/jquery.js",
+    "node_modules/linq/linq.js"
   ],
   "style": "style/visual.less",
   "capabilities": "capabilities.json",

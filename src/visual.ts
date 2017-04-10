@@ -1,3 +1,5 @@
+
+
 /*
  *  Power BI Visual CLI
  *
@@ -27,48 +29,82 @@
 
 
 
-module powerbi.extensibility.visual {
-     
-     export interface DataRow {
-    Date: Date,
-    TaskId: string,
-    Name: string
-}
 
+
+module powerbi.extensibility.visual {
+    export interface DataRow {
+        Date: Date,
+        TaskId: string,
+        Name: string
+    }
     export class Visual implements IVisual {
         private target: HTMLElement;
         private updateCount: number;
 
         constructor(options: VisualConstructorOptions) {
+
+
+
             console.log('Visual constructor', options);
             this.target = options.element;
+            this.target.innerHTML = "";
             this.updateCount = 0;
 
-            jQuery(this.target).ready(()=>{
+            jQuery(this.target).ready(() => {
                 console.log("Dokument ready")
+
             });
         }
 
         public update(options: VisualUpdateOptions) {
-            let allData:Array<DataRow> = [];
-            
+            let allData: Array<DataRow> = [];
+            this.target.innerHTML = "";
+
             options.dataViews[0].table.rows.forEach(element => {
-                let date = new Date(element[3].toString() + "-" + element[2].toString()  + "-" +  element[0].toString());
-                let  obj:DataRow = { Date: date, TaskId:element[5].toString(), Name:element[4].toString() };
+                let date = new Date(element[3].toString() + "-" + element[2].toString() + "-" + element[0].toString());
+                let obj: DataRow = { Date: date, TaskId: element[5].toString(), Name: element[4].toString() };
                 allData.push(obj);
             });
 
-              switch (allData.filter( element => this.CheckS11(element,1,5)).length)
-              {
-                  case 0:
-                    this.target.innerHTML += "<div class='taskBlock few'>S11</div>"
-                  case 1:
-                    this.target.innerHTML += "<div class='taskBlock good'>S11</div>"
-                  default:
-                    this.target.innerHTML += "<div class='taskBlock lot'>S11</div>"
-              }
+            console.log("Działa2?")
 
-            
+            var d = allData.filter(element => this.CheckS11(element, 1, 5)).length;
+
+            let groupByDate = this.GroupBy(allData, "Date") as Array<any>;
+
+            for (var propertyName in groupByDate) {
+
+                var date = new Date(propertyName);
+
+                var value = groupByDate[propertyName] as Array<DataRow>;
+
+                console.log(value.length);
+
+
+                console.log(this.getFormattedDate(date));
+            }
+
+
+
+
+
+
+
+
+
+
+            switch (d) {
+                case 0:
+                    this.target.innerHTML += "<div class='taskBlock few'>S11 </div>"
+                    break;
+                case 1:
+                    this.target.innerHTML += "<div class='taskBlock good'>S11</div>"
+                    break;
+                default:
+                    this.target.innerHTML += "<div class='taskBlock lot'>S11</div>"
+            }
+
+
             //   console.log(allDate.filter((element)=>element.Day == "21").length)
             console.log(jQuery().jquery)
 
@@ -77,18 +113,32 @@ module powerbi.extensibility.visual {
         }
 
 
-        private CheckS11(row:DataRow, dayFrom:number, dayTo:number): boolean
-        {
+        private GroupBy(xs: Array<DataRow>, key: any): any {
+            return xs.reduce(function (rv, x) {
+                (rv[x[key]] = rv[x[key]] || []).push(x);
+                return rv;
+            }, {});
+        }
+
+        private CheckS11(row: DataRow, dayFrom: number, dayTo: number): boolean {
             if (row.TaskId === "S11") {
 
                 var day = row.Date.getDay();
 
-                if(day => dayFrom && day <= dayTo)
-                {
+                if (day => dayFrom && day <= dayTo) {
                     return true;
                 }
             }
             return false;
+        }
+
+        private getFormattedDate(date) {
+            var year = date.getFullYear();
+            var month = (1 + date.getMonth()).toString();
+            month = month.length > 1 ? month : '0' + month;
+            var day = date.getDate().toString();
+            day = day.length > 1 ? day : '0' + day;
+            return day + '-' + month + '-' + year;
         }
     }
 }
