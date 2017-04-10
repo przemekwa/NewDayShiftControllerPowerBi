@@ -99,11 +99,11 @@ module powerbi.extensibility.visual {
 
             switch (result) {
                 case ShiftResult.GOOD:
-                    return '<td><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>'
+                    return '<td><span class="glyphicon glyphicon-ok good" aria-hidden="true"></span></td>'
                 case ShiftResult.DOWN:
-                    return '<td><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></td>'
+                    return '<td><span class="glyphicon glyphicon-arrow-down down" aria-hidden="true"></span></td>'
                 case ShiftResult.UP:
-                    return '<td><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></td>'
+                    return '<td><span class="glyphicon glyphicon-arrow-up up" aria-hidden="true"></span></td>'
                 case ShiftResult.NONE:
                     return '<td><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></td>'
             }
