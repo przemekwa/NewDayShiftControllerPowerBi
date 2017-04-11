@@ -1,5 +1,3 @@
-
-
 /*
  *  Power BI Visual CLI
  *
@@ -28,6 +26,7 @@
 
 module powerbi.extensibility.visual {
 
+
     export interface DataRow {
         Date: Date,
         TaskId: string,
@@ -49,6 +48,8 @@ module powerbi.extensibility.visual {
             this.target = options.element;
             this.target.innerHTML = "";
 
+         
+
             jQuery(this.target).ready(() => {
                 console.log("Dokument ready")
 
@@ -67,11 +68,16 @@ module powerbi.extensibility.visual {
 
             let groupByDate = this.GroupBy(allData, "Date") as Array<any>;
 
-            let htmlOutput = `<div class="container"><div class="panel-group"><div class="panel panel-default"><div class="panel-heading">Zmiany</div><div class="panel-body"><table class="table table-striped"><thead>      <tr>        <th>Data</th>        <th>S11</th>        <th>S12</th>        <th>S14</th>        <th>S16</th>        <th>S15</th>        <th>S21</th>        <th>S22</th>        <th>S23</th>        <th>S01</th>        <th>S02</th>      </tr>    </thead>    <tbody>`
+            let htmlOutput = `<div class="container"><div class="panel-group"><div class="panel panel-default"><div class="panel-heading">Zmiany</div><div class="panel-body"><table class="table table-striped tablefont"><thead>      <tr> <th>Dzień</th>        <th>Data</th>        <th>S11</th>        <th>S12</th>        <th>S14</th>        <th>S16</th>        <th>S15</th>        <th>S21</th>        <th>S22</th>        <th>S23</th>        <th>S01</th>        <th>S02</th>      </tr>    </thead>    <tbody>`
 
             for (var propertyName in groupByDate) {
                 var date = new Date(propertyName);
-                htmlOutput += "<tr><td>" + this.getFormattedDate(date) + "</td>"
+
+                let polishDay: Array<string> = ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"]
+
+
+                htmlOutput += "<tr><td>" + polishDay[date.getDay()] + "</td>"
+                htmlOutput += "<td>" + this.getFormattedDate(date) + "</td>"
                 htmlOutput += this.getTdTag(this.checkExaclyOneShft(date, groupByDate[propertyName] as Array<DataRow>, "S11"));
                 htmlOutput += this.getTdTag(this.checkExaclyOneShft(date, groupByDate[propertyName] as Array<DataRow>, "S12"));
                 htmlOutput += this.getTdTag(this.checkAtLeastOneShft(date, groupByDate[propertyName] as Array<DataRow>, "S14"));
@@ -83,7 +89,35 @@ module powerbi.extensibility.visual {
                 htmlOutput += this.getTdTag(this.checkkWeekendShft(date, groupByDate[propertyName] as Array<DataRow>, "S01"));
                 htmlOutput += this.getTdTag(this.checkkWeekendShft(date, groupByDate[propertyName] as Array<DataRow>, "S02"));
             }
-            htmlOutput += `</tbody></table></div></div></div></div>`
+
+
+
+
+
+            htmlOutput += `</tbody></table></div></div><div class="panel-group">
+    <div class="panel panel-default" style="margin-top: 10px; width: 400px ">
+      <div class="panel-heading" style="font-size: 10px">Legenda</div>
+      <div class="panel-body">
+      <div></div>
+      <div style="font-size: 10px">
+      <table>
+      <tr>
+      <td> <span  class="glyphicon glyphicon-ok legendIco" aria-hidden="true"></td>
+       <td>Zmiana obsadzona</td>
+        <td> <span class="glyphicon glyphicon-arrow-down down legendIco" aria-hidden="true"></td>
+       <td>Za dużo dyżurów</td>
+        <td> <span class="glyphicon glyphicon-arrow-up up legendIco" aria-hidden="true"></span></td>
+       <td>Za mało dyżurów</td>
+       <td><span class="glyphicon glyphicon-minus none legendIco" aria-hidden="true"></span></td>
+       <td>Nie dotyczy</td>
+      </tr>
+          </table>
+      </div>
+       
+      </div>
+    </div>
+   
+  </div></div></div>`
 
             this.target.innerHTML = htmlOutput;
         }
@@ -105,7 +139,7 @@ module powerbi.extensibility.visual {
                 case ShiftResult.UP:
                     return '<td><span class="glyphicon glyphicon-arrow-up up" aria-hidden="true"></span></td>'
                 case ShiftResult.NONE:
-                    return '<td><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></td>'
+                    return '<td><span class="glyphicon glyphicon-minus none" aria-hidden="true"></span></td>'
             }
         }
 

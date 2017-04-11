@@ -1,7 +1,11 @@
 @import (less) "node_modules/bootstrap/dist/css/bootstrap.css";
 
+@icoSize: 12px;
+@legendIcoSize: 8px;
+@legendFontSizeSmall: 10px;
+
 p {
-    font-size: 20px;
+    font-size: 10px;
     font-weight: bold;
     em {
         background: yellow;
@@ -12,15 +16,36 @@ p {
 
 .good {
  color: green;
+ font-size: @icoSize
 }
 
 .up {
  color: red;
+ font-size: @icoSize
 }
 
 .down {
     color: red;
+    font-size: @icoSize
 }
+
+.none {
+    font-size: @icoSize
+}
+
+.legendIco {
+    margin: 5px;
+    font-size: @legendIcoSize;
+}
+
+.fontSmall {
+    font-size: legendFontSizeSmall
+}
+
+.tablefont {
+    font-size: 10px;
+}
+
 
 .taskBlock {
    
