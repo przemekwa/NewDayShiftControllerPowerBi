@@ -30,8 +30,8 @@ module powerbi.extensibility.visual {
 
     export function logExceptions(): MethodDecorator {
         return function (target: Object, propertyKey: string, descriptor: TypedPropertyDescriptor<Function>)
-        : TypedPropertyDescriptor<Function> {
-            
+            : TypedPropertyDescriptor<Function> {
+
             return {
                 value: function () {
                     try {
@@ -44,12 +44,12 @@ module powerbi.extensibility.visual {
             }
         }
     }
-     
-    
-     
-     
 
-     
+
+
+
+
+
     export interface DataRow {
         Date: Date,
         TaskId: string,
@@ -78,17 +78,17 @@ module powerbi.extensibility.visual {
             this.target = options.element;
             this.target.innerHTML = "";
 
- 
- 
+
+
             jQuery(this.target).ready(() => {
                 console.log("Dokument ready")
             });
         }
 
-       
-    
 
-        @logExceptions() 
+
+
+        @logExceptions()
         public update(options: VisualUpdateOptions) {
             let allData: Array<DataRow> = [];
             this.target.innerHTML = "";
@@ -102,29 +102,16 @@ module powerbi.extensibility.visual {
 
             let groupByDate = this.GroupBy(allData, "Date") as Array<any>;
 
-        
+            console.log(groupByDate);
 
-let panelArray:Array<string> = [];
 
-            for (var propertyName in groupByDate) {
 
-                let panel =  `<div class="panel-group shiftPanel"><div class="panel panel-default"><div class="panel-heading">Zmiany</div><div class="panel-body"><table class="table table-striped tablefont"><thead>      <tr> <th>Dzień</th>        <th>Data</th>        <th>S11</th>        <th>S12</th>        <th>S14</th>        <th>S16</th>        <th>S15</th>        <th>S21</th>        <th>S22</th>        <th>S23</th>        <th>S01</th>        <th>S02</th>      </tr>    </thead>    <tbody>`
+            let panelArray: Array<string> = [];
 
-                var date = new Date(propertyName);
-                panel += "<tr><td>" + this.polishDay[date.getDay()] + "</td>"
-                panel += "<td>" + this.getFormattedDate(date) + "</td>"
-                panel += this.getTdTag(this.checkExaclyOneShft(date, groupByDate[propertyName] as Array<DataRow>, "S11"));
-                panel += this.getTdTag(this.checkExaclyOneShft(date, groupByDate[propertyName] as Array<DataRow>, "S12"));
-                panel += this.getTdTag(this.checkAtLeastOneShft(date, groupByDate[propertyName] as Array<DataRow>, "S14"));
-                panel += this.getTdTag(this.checkAtLeastOneShft(date, groupByDate[propertyName] as Array<DataRow>, "S16"));
-                panel += this.getTdTag(this.checkAtLeastOneShft(date, groupByDate[propertyName] as Array<DataRow>, "S15"));
-                panel += this.getTdTag(this.checkExaclyOneShft(date, groupByDate[propertyName] as Array<DataRow>, "S21"));
-                panel += this.getTdTag(this.checkExaclyOneShft(date, groupByDate[propertyName] as Array<DataRow>, "S22"));
-                panel += this.getTdTag(this.checkAtLeastOneShft(date, groupByDate[propertyName] as Array<DataRow>, "S23"));
-                panel += this.getTdTag(this.checkkWeekendShft(date, groupByDate[propertyName] as Array<DataRow>, "S01"));
-                panel += this.getTdTag(this.checkkWeekendShft(date, groupByDate[propertyName] as Array<DataRow>, "S02"));
+            var temp = 0;
 
-                 panel += `</tbody></table></div></div><div class="panel-group">
+            let panelHeaderHtml = `<div class="panel-group shiftPanel"><div class="panel panel-default"><div class="panel-heading">Zmiany</div><div class="panel-body"><table class="table table-striped tablefont"><thead>      <tr> <th>Dzień</th>        <th>Data</th>        <th>S11</th>        <th>S12</th>        <th>S14</th>        <th>S16</th>        <th>S15</th>        <th>S21</th>        <th>S22</th>        <th>S23</th>        <th>S01</th>        <th>S02</th>      </tr>    </thead>    <tbody>`
+            let panelFooterHtml = `</tbody></table></div></div><div class="panel-group">
     <div class="panel panel-default" style="margin-top: 10px; width: 400px ">
       <div class="panel-heading" style="font-size: 10px">Legenda</div>
       <div class="panel-body">
@@ -149,22 +136,53 @@ let panelArray:Array<string> = [];
    
   </div></div>`
 
-  panelArray.push(panel);
 
+            let panel = panelHeaderHtml;
 
+            for (var propertyName in groupByDate) {
 
+                var date = new Date(propertyName);
+                panel += "<tr><td>" + this.polishDay[date.getDay()] + "</td>"
+                panel += "<td>" + this.getFormattedDate(date) + "</td>"
+                panel += this.getTdTag(this.checkExaclyOneShft(date, groupByDate[propertyName] as Array<DataRow>, "S11"));
+                panel += this.getTdTag(this.checkExaclyOneShft(date, groupByDate[propertyName] as Array<DataRow>, "S12"));
+                panel += this.getTdTag(this.checkAtLeastOneShft(date, groupByDate[propertyName] as Array<DataRow>, "S14"));
+                panel += this.getTdTag(this.checkAtLeastOneShft(date, groupByDate[propertyName] as Array<DataRow>, "S16"));
+                panel += this.getTdTag(this.checkAtLeastOneShft(date, groupByDate[propertyName] as Array<DataRow>, "S15"));
+                panel += this.getTdTag(this.checkExaclyOneShft(date, groupByDate[propertyName] as Array<DataRow>, "S21"));
+                panel += this.getTdTag(this.checkExaclyOneShft(date, groupByDate[propertyName] as Array<DataRow>, "S22"));
+                panel += this.getTdTag(this.checkAtLeastOneShft(date, groupByDate[propertyName] as Array<DataRow>, "S23"));
+                panel += this.getTdTag(this.checkkWeekendShft(date, groupByDate[propertyName] as Array<DataRow>, "S01"));
+                panel += this.getTdTag(this.checkkWeekendShft(date, groupByDate[propertyName] as Array<DataRow>, "S02"));
+
+                temp++;
+
+                if (temp == 6) {
+                    panel += panelFooterHtml;
+                    panelArray.push(panel);
+                    panel = panelHeaderHtml;
+                    temp = 0;
+                }
             }
 
-            console.log(panelArray.length);
+            if (panelArray.length === 0 )
+            {
+                 panel += panelFooterHtml;
+                    panelArray.push(panel);
+                    panel = panelHeaderHtml;
+                    temp = 0;
+            }
 
-            let htmlOutput = "";    
+           
+
+            let htmlOutput = "";
 
 
 
 
 
 
-htmlOutput = `<div class="container">
+            htmlOutput = `<div class="container">
   <br>
   <div id="myCarousel" class="carousel slide" data-ride="carousel">
     <!-- Indicators -->
@@ -180,28 +198,27 @@ htmlOutput = `<div class="container">
  
           
 
-`     
+`
 
-panelArray.forEach((element, index) => {
-    
-    if (index === 0) {
-     htmlOutput+=`<div class="item active">`
-    }
-    else
-    {
- htmlOutput+=`<div class="item">`
-    }
-    
+            panelArray.forEach((element, index) => {
 
-htmlOutput+= element;
+                if (index === 0) {
+                    htmlOutput += `<div class="item active">`
+                }
+                else {
+                    htmlOutput += `<div class="item">`
+                }
 
 
-    htmlOutput+=`</div>`
-
-});
+                htmlOutput += element;
 
 
- htmlOutput += `   </div>
+                htmlOutput += `</div>`
+
+            });
+
+
+            htmlOutput += `   </div>
 
     <!-- Left and right controls -->
     <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
@@ -215,7 +232,7 @@ htmlOutput+= element;
   </div>
 </div>`
 
-           
+
 
             this.target.innerHTML = htmlOutput;
         }
