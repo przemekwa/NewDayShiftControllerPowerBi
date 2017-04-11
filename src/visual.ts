@@ -184,7 +184,7 @@ module powerbi.extensibility.visual {
 
             htmlOutput = `<div class="container">
   <br>
-  <div id="myCarousel" class="carousel slide" data-ride="carousel">
+  <div id="myCarousel" class="carousel slide" data-ride="carousel"  data-interval="false">
     <!-- Indicators -->
     <ol class="carousel-indicators">
       <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
