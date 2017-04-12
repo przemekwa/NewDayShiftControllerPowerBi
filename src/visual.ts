@@ -51,7 +51,7 @@ module powerbi.extensibility.visual {
 
 
     export interface DataRow {
-        Date: Date,
+        Date: string,
         TaskId: string,
         Name: string
     }
@@ -73,8 +73,8 @@ module powerbi.extensibility.visual {
         private polishDay: Array<string> = ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"]
 
 
+
         constructor(options: VisualConstructorOptions) {
-            console.log('Visual constructor', options);
             this.target = options.element;
             this.target.innerHTML = "";
 
@@ -93,9 +93,16 @@ module powerbi.extensibility.visual {
             let allData: Array<DataRow> = [];
             this.target.innerHTML = "";
 
+            console.log("Wersja 0.0.0.4");
+
+
+            console.log("Pierwszy element z danymi " + options.dataViews[0].table.rows[0]);
+
             options.dataViews[0].table.rows.forEach(element => {
-                let date = new Date(element[3].toString() + "-" + element[2].toString() + "-" + element[0].toString());
-                let obj: DataRow = { Date: date, TaskId: element[5].toString(), Name: element[4].toString() };
+
+                let dateString =  element[0].toString() + "-" + this.getNumberMonth(element[2].toString()) + "-" + (element[3] < 10 ? '0' : '') +  element[3]
+
+                let obj: DataRow = { Date: dateString, TaskId: element[5].toString(), Name: element[4].toString() };
                 allData.push(obj);
             });
 
@@ -103,7 +110,6 @@ module powerbi.extensibility.visual {
             let groupByDate = this.GroupBy(allData, "Date") as Array<any>;
 
             console.log(groupByDate);
-
 
 
             let panelArray: Array<string> = [];
@@ -141,8 +147,11 @@ module powerbi.extensibility.visual {
 
             for (var propertyName in groupByDate) {
 
-                var date = new Date(propertyName);
+                let date =  this.getDate(propertyName)
+
                 panel += "<tr><td>" + this.polishDay[date.getDay()] + "</td>"
+
+
                 panel += "<td>" + this.getFormattedDate(date) + "</td>"
                 panel += this.getTdTag(this.checkExaclyOneShft(date, groupByDate[propertyName] as Array<DataRow>, "S11"));
                 panel += this.getTdTag(this.checkExaclyOneShft(date, groupByDate[propertyName] as Array<DataRow>, "S12"));
@@ -165,15 +174,14 @@ module powerbi.extensibility.visual {
                 }
             }
 
-            if (panelArray.length === 0 )
-            {
-                 panel += panelFooterHtml;
-                    panelArray.push(panel);
-                    panel = panelHeaderHtml;
-                    temp = 0;
+            if (panelArray.length === 0) {
+                panel += panelFooterHtml;
+                panelArray.push(panel);
+                panel = panelHeaderHtml;
+                temp = 0;
             }
 
-           
+
 
             let htmlOutput = "";
 
@@ -235,6 +243,43 @@ module powerbi.extensibility.visual {
 
 
             this.target.innerHTML = htmlOutput;
+        }
+
+         /**Parses string formatted as YYYY-MM-DD to a Date object.
+   * If the supplied string does not match the format, an 
+   * invalid Date (value NaN) is returned.
+   * @param {string} dateStringInRange format YYYY-MM-DD, with year in
+   * range of 0000-9999, inclusive.
+   * @return {Date} Date object representing the string.
+   */
+        private getDate(dateStringInRange): Date {
+
+            var isoExp = /^\s*(\d{4})-(\d\d)-(\d\d)\s*$/,
+                date = new Date(NaN), month, parts = isoExp.exec(dateStringInRange);
+
+            if (parts) {
+                month = +parts[2];
+                date.setFullYear(+parts[1], month - 1, +parts[3]);
+                if (month != date.getMonth() + 1) {
+                    date.setTime(NaN);
+                }
+            }
+            return date;
+        }
+
+
+
+
+        private GetDateFrom(input): string {
+
+            var year = input.slice(-4),
+                month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].indexOf(input.substr(4, 3)) + 1,
+                day = input.substr(8, 2);
+
+            var output = year + '-' + (month < 10 ? '0' : '') + month + '-' + day;
+
+            return day + '-' + (month < 10 ? '0' : '') + '-' + year;
         }
 
         private GroupBy(xs: Array<DataRow>, key: any): any {
@@ -319,6 +364,35 @@ module powerbi.extensibility.visual {
             day = day.length > 1 ? day : '0' + day;
 
             return day + '-' + month + '-' + year;
+        }
+
+        private getNumberMonth(stringMonth: string): string {
+            switch (stringMonth) {
+                case "January":
+                    return "01";
+                case "February":
+                    return "02";
+                case "March":
+                    return "03";
+                case "April":
+                    return "04";
+                case "May":
+                    return "05";
+                case "June ":
+                    return "06";
+                case "July":
+                    return "07";
+                case "August":
+                    return "08";
+                case "September":
+                    return "09";
+                case "October":
+                    return "10";
+                case "November":
+                    return "11";
+                case "December":
+                    return "12";
+            }
         }
     }
 }
