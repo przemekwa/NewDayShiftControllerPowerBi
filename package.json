@@ -1,6 +1,7 @@
 {
   "name": "visual",
   "dependencies": {
+    "font-awesome": "^4.7.0",
     "linq": "^3.0.5"
   }
 }
