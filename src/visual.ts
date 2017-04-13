@@ -45,11 +45,6 @@ module powerbi.extensibility.visual {
         }
     }
 
-
-
-
-
-
     export interface DataRow {
         Date: string,
         TaskId: string,
@@ -71,13 +66,10 @@ module powerbi.extensibility.visual {
     export class Visual implements IVisual {
         private target: HTMLElement;
         private polishDay: Array<string> = ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"]
-        
         private arrowUpImageSoruceHtml = `<img class="icon icons8-Up" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAABX0lEQVRoQ+2W4W3CQAyFnU0YhW5SJitswibtJq0sJdIlutw9+9lCVOYnnOH7fA87i7z5a3lzfimBV99g9g18roL3LNFMAYX/WsFvIpIikSXQwm/NT5HIEOjBp0lEC4zgUyQiBRD4cIkoAQt8qESEgAc+TIIVOIPXibON0Bb2+J5+Rk0nRmAErzP/97C89LdmNeZ95xVAQHoCCojUwiIeARTgTCBUwiqAwivkSCBMwiJggUcEQiRQASs8KkBLIAIeeIsAJTET8MJbBdwSIwEG3iPgkjgTYOG9AmaJnsBFRL47m8S68mdjdLSszhr4ISLPthC9ASs8cwMb31HisW7xnTjyH/DARwi0cerC64HZFNI4/cAPJvuDTITab7oeY4NEyMm8K4sSGLLMboARKQGke3UDgy5VhCpCSAcqQmSXagpVhCpCZAcqQmQDawr95wiR4cDKMyOEEZCnSoBsIF3+B67DaDFZf1UHAAAAAElFTkSuQmCC" width="12" height="12">`
         private arrowDownImageSoruceHtml = `<img class="icon icons8-Down" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAABc0lEQVRoQ+2Y6w3CMAyEr5swCmwCk8EobAKbAJZIVYU8/IpCJecPEqX2fT47iViw87XsXD8CYLaDIx14ZXBDcg0J+hUeAJz2DAcaVYoWihbiVCBayFil2IWihaKFjBWIFjIWMHahf2+hA4Cn0mWvy9wRwL2modVCZwBXABcANwWEB0DSQPlJx8+qAaQX0wsaCCtArqEIUQKgtnkUYKUQFoBcfJJzytuJ64DGCS1ATXyxgJwZyM3gOqEBEIknYb1zQBxwQysFUOXqAZAeVWAAEgBtjq4DqaCaBFwATezVaI4DWggOgEk8ZwbyAZYk7AFIYlXPUYkDUidaAC7iNQ5IIGoAbuItAJzdqQTgKt4K0IOgi+B20QGYf0fPuQdjcQ40M8Ad7OrgbR6YxHs40JuJFoRZvCdAq51KEC7ivQG4EG7iRwD0IFzFjwKoQbiLHwmQQwwRPxogQdCn5k8BzjbMvk6zgs34kcdBNkP3mjMAppb/k/wNpdxoMZbJgZUAAAAASUVORK5CYII=" width="12" height="12">`
         private goodImageSourceHtml = `<img class="icon icons8-Checkmark" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAABJElEQVRIS92V0U0DQQxE33VACXQQqCCkgkAHUAFJB9BBUklCBdABUAFKB9ABmmjvZFnry65uFQn8kx+v33k8djrOFN2ZOPxZ0C2wBNbAt1WrZUc3wGsqLsgDsO9hrUAXwDtw6WY+1G8F2gCPDvICSMpjtABZyfq6P6m7YU5TQZFkd3Y+LTo6KVkL6YokmwqSZF+Afm0sgLfctcnNSI/lILnmIzhR2g8tpo0tsIpOmgcJoqW7SputL/QwWXbnCh7MmyzLg9T23GTKnhZWLVk0Iw9SnoVVSxaB9MWCzVz/gsnKT7WSjbkuguW0D13mk6PLUAJ7znQYmW701o3BPpPLwsKlHfV5Eex6ZMeK7J1L8rAqyWpPkGD36ZHcVx1T/yaKgf8P9AvaUjgbWlRgnwAAAABJRU5ErkJggg==" width="13" height="13">`
         private noneImageSoruceHtml = `<img class="icon icons8-Minus-Math-" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAAYElEQVRIS2NkoBNgpJM9DKMWkR3So0E3GnTwEBiwxHCDgYFBneyIQNV4k4GBQQMmhO6j/1SyBMP8AbOImkF3lYGBQQdX0FE55BDGDViqG/UR0SEwGkdEBxW6wtGgIzvoANnBBhvKkqj1AAAAAElFTkSuQmCC" width="13" height="13">`
-
-
 
         constructor(options: VisualConstructorOptions) {
             this.target = options.element;
@@ -198,17 +190,7 @@ module powerbi.extensibility.visual {
 
 
 
-        private GetDateFrom(input): string {
-
-            var year = input.slice(-4),
-                month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].indexOf(input.substr(4, 3)) + 1,
-                day = input.substr(8, 2);
-
-            var output = year + '-' + (month < 10 ? '0' : '') + month + '-' + day;
-
-            return day + '-' + (month < 10 ? '0' : '') + '-' + year;
-        }
+       
 
         private GroupBy(xs: Array<DataRow>, key: any): any {
             return xs.reduce(function (rv, x) {
@@ -254,8 +236,6 @@ module powerbi.extensibility.visual {
             if (date.getDay() > 0 && date.getDay() < 6) {
                 return ShiftResult.NONE
             }
-
-
 
             switch (rows.filter(e => e.Name == task).length) {
                 case 1:
